@@ -72,6 +72,30 @@ async function getEmployeeNames(){
     return employeeNames;
 }
 
+// Now we start the view functions
+async function viewDepartment(){
+    let query = "SELECT * FROM department";
+    const rows = await db.query(query);
+    console.table(rows);
+}
+
+async function viewRole(){
+    let query = "SELECT * FROM role";
+    const rows = await db.query(query);
+    console.table(rows);
+    return rows;
+}
+
+async function viewEmployee(){
+    let query = "SELECT * FROM employee";
+    const rows = await db.query(query);
+    console.table(rows);
+}
+
+async function viewEmployeesByDepartment(){
+    let query = "SELECT first_name, last_name, dpartment.name FROM ((employee INNER JOIN"
+}
+
 async function start() {
     return
     inquirer.prompt([{
