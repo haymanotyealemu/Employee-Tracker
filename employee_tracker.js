@@ -93,7 +93,25 @@ async function viewEmployee(){
 }
 
 async function viewEmployeesByDepartment(){
-    let query = "SELECT first_name, last_name, dpartment.name FROM ((employee INNER JOIN"
+    //Using the JOIN clause in a query, we can combine row data across two separate tables(employee and department)
+    let query = "SELECT first_name, last_name, dpartment.name FROM ((employee INNER JOIN role ON role_id = role.id) INNER JOIN department ON department_id = department.id);";
+    const rows = await db.query(query);
+    console.table(rows);
+}
+
+// This function will return an array with only two elements frist_name and last_name.
+function getFirstAndLastName(fullName){
+    let employee = fullName.split(" ");
+    if(employee.length == 2){
+        return employee;
+    }
+
+    const last_name = employee[employee.length-1];
+    let first_name = " ";
+    for(let i=0; i< employee.length-1; i++){
+        first_name = first_name + employee[i] + " ";
+    }
+    return [first_name.trim(), last_name];
 }
 
 async function start() {
