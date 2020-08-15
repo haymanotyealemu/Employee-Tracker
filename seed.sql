@@ -1,3 +1,4 @@
+USE employee_trackerDB;
 -- Insert rows into table 'department'
 INSERT INTO department (name) VALUES ("HR");
 INSERT INTO department (name) VALUES ("IT");
