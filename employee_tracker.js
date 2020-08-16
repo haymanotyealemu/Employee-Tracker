@@ -281,117 +281,36 @@ async function getRoleInfo(){
     ])
 }
 
-//     }]).then(function(answer){
-//         switch(answer.AddViewOrUpdate){
-//             case "Add departments":
-//                 addDepartment();
-//                 break;
+async function getUpdateEmployeeRoleInfo(){
+    const employees = await getEmployeeNames();
+    const roles = await getRoles();
+    return inquirer
+    .prompt([
+        {
+            name: "employeeName",
+            type: "list",
+            message: "Which employee do you want to update?",
+            choices: [
+                ...employees
+            ]
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What is the employee's new role?",
+            choices: [
+                ...roles
+            ]
+        }
+    ])
+}
 
-//             case "Add roles":
-//                 addRoles();
-//                 break;
-
-//             case "Add roles":
-//                 addEmployee();
-//                 break;
-
-//             case "View departments, roles, employees":
-//                 viewDepartment();
-//                 break;
-
-//             case "View roles": 
-//                 viewRole();
-//                 break;
-
-//             case "View employee": 
-//                 viewEmployee();
-//                 break;
-
-//             case "Update employee roles":
-//                 update();
-//                 break;
-
-//             case "Exit":
-//                 connection.end();    
-//         }
-//     });
-// };
-// //Add Departments
-// function addDepartment(){
-//     inquirer.prompt({
-//         name:"name",
-//         type:"input",
-//         message:"What is the name of your department?"
-//     }).then(function(answer){
-//             connection.query("INSERT INTO departments SET ?", {name: answer.name}, function(err){
-//                 if (err) throw err;
-//                 console.log("Your department was added successfully!");
-//                 start();
-//                 }
-//             );
-//     });
-// }
-
-// function addRoles(){
-//     inquirer.prompt([
-//         {
-//             name:"title",
-//             type:"input",
-//             message:"What is the name of your position title?"
-//         },
-//         {
-//             name:"salary",
-//             type:"input",
-//             message:"How much is your salary?"
-
-//         }
-//     ]).then(function(answer){
-//             connection.query("INSERT INTO role SET ?", 
-//             {
-//                 title: answer.title,
-//                 title: answer.title
-//             }, 
-//             function(err){
-//                 if (err) throw err;
-//                 console.log("Your title was added successfully!");
-//                 start();
-//                 }
-//             );
-//     });
-// }
-
-// function addEmployee(){
-//     inquirer.prompt([
-//         {
-//             name:"firstname",
-//             type:"input",
-//             message:"What is your first name?"
-//         },
-//         {
-//             name:"lastname",
-//             type:"input",
-//             message:"What is your last name?"
-//         },
-//         {
-//             name:"manager",
-//             type:"input",
-//             message:"Who is your manager?"
-//         }
-
-//     ]
-//     ).then(function(answer){
-//         var query = "SELECT role.title, FROM role INNER JOIN employee"
-//             connection.query("INSERT INTO employee SET ?", 
-//             {
-//                 first_name: answer.firstname,
-//                 last_name: answer.lastname
-//             }, function(err){
-//                 if (err) throw err;
-//                 console.log("Your employee was added successfully!");
-//                 start();
-//                 }
-//             );
-//     });
-// }
+async function main(){
+    let exitLoop = false;
+    while(!exitLoop) {
+        const prompt = await start();
+        
+    }
+}
 
 
