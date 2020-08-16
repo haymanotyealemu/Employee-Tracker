@@ -168,7 +168,7 @@ async function removeDepartment(departmentInfo){
     let query = "DELETE FROM department WHERE name=?";
     let args = [departmentName];
     const rows = await db.query(query, args);
-    console.log(`${departmentName} is deleted!`);
+    console.log(`${departmentName} was deleted!`);
 }
 
 async function start() {
@@ -193,7 +193,7 @@ async function start() {
         }
     ])
 }
-
+// Here we prompt the user to get the employee information
 async function getAddEmployeeInfo(){
     const managers = await getManagerName();
     const roles = await getRoles();
@@ -214,17 +214,68 @@ async function getAddEmployeeInfo(){
             type:"list",
             message:"What is the employee's role?",
             choices: [
-                // we can use spread operator to pass the values of our roles array
+                // we can use spread operator to pass the values of our roles array populate from seed.sql
                 ...roles
             ]
         },
         {
             name:"manager",
             type:"list",
-            message:"Who id the employee's manager?",
+            message:"Who is the employee's manager?",
             choices: [
-                // we can use spread operator to pass the values of our managers array
+                // we can use spread operator to pass the values of our managers array populate from seed.sql
                 ...managers
+            ]
+        }
+    ])
+}
+
+
+async function getDepartmentInfo(){
+    return inquirer
+    .prompt([
+        {
+            name: "departmentName",
+            type:"input",
+            message: "What is the name of new department? "
+        }
+    ])
+}
+
+async function getremoveEmployeeInfo(){
+    const employees = await getEmployeeNames();
+    return inquirer
+    .prompt([
+        {
+            name: "employeeName",
+            type:"list",
+            choices: [
+                ...employees
+            ]
+        }
+    ])
+}
+
+async function getRoleInfo(){
+    const departments = await getDepartmentNames();
+    return inquirer
+    .prompt([
+        {
+            name: "roleName",
+            type: "input",
+            message: "What is the tiltle of the new role?"
+        },
+        {
+            name:"salary",
+            type:"input",
+            message:"What is the salary of the new role?"
+        },
+        {
+            name: "departmentName",
+            type: "list",
+            message: "Which department uses this role?",
+            choices: [
+                ...departments
             ]
         }
     ])
