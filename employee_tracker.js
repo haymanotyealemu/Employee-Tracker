@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-let Database = require("./asset/db");
+let Database = require("./lib/db");
 
 const db = new Database({
     host: "localhost",
@@ -114,14 +114,72 @@ function getFirstAndLastName(fullName){
     return [first_name.trim(), last_name];
 }
 
+
+// Here we will define async functions for updating epmloyee role so we need to get the employee full name and 
+async function updateEmployeerole(employeeInfo){
+    const roleId = await getRoleId(employeeInfo.role);
+    const employee = getFirstAndLastName(employeeInfo.employeeName);
+
+    let query = "UPDATE employee SET role_id=? WHERE employee.first_name=? AND employee.last_name=?";
+    let args = [roleId, employee[0], epmloyee[1]];
+    const rows = await db.query(query, args);
+    console.log(`You updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
+}
+// Here we will define async function for inserting ane data to our employee,department and role tables.
+
+async function addEmployee(employeeInfo){
+    let roleId = await getRoleId(employeeInfo.role);
+    let managerId = await getEmployeeId(employeeInfo.manager);
+    let query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+    let args = [employee.first_name, employee.last_name, roleId, managerId];
+    const rows= await db.query(query, args);
+
+}
+
+async function addDepartment(departmentInfo){
+    const departmentName = departmentInfo.departmentName;
+    let query = "INSERT INTO department (name) VALUES (?)";
+    let args = [departmentName];
+    const rows = await db.query(query, args);
+    console.log(`Added department named ${departmentName}`);
+}
+
+async function addRole(roleInfo){
+    const departmentId = await getDepartmentId(roleInfo.departmentName);
+    const salary = roleInfo.salary;
+    const title = roleInfo.roleName;
+    let query = "INSERT INTO role (title, salary, department_id) VALUES (?,?,?)";
+    let args = [title, salary, departmentId];
+    const rows = await db.query(query, args);
+    console.log(`Added roles ${title}`);
+}
+
+// Deleting employee from selected rows of employee table.
+async function removeEmployee(employeeInfo){
+    const employeeName = getFirstAndLastName(employeeInfo.employeeName);
+    let query = "DELETE FROM employee WHERE first_name=? AND last_name=?";
+    let args = [employeeName[0], employeeName[1]];
+    const rows = await db.query(query, args);
+    console.log(`Employee ${employeeName[0]} ${employeeName[1]} Deleted`);
+}
+//// Deleting employee from selected rows of employee table.
+async function removeDepartment(departmentInfo){
+    const departmentName = await getDepartmentNames(departmentInfo);
+    let query = "DELETE FROM department WHERE name=?";
+    let args = [departmentName];
+    const rows = await db.query(query, args);
+    console.log(`${departmentName} is deleted!`);
+}
+
 async function start() {
     return
-    inquirer.prompt([{
-        type:"list",
-        message:"What would you like to do?",
-        name:"options",
-        choices:[
-            "Add departments", 
+    inquirer.prompt([
+        {
+            type:"list",
+            message:"What would you like to do?",
+            name:"actions",
+            choices:[
+            "Add department", 
             "Add role", 
             "Add employee",
             "View departments", 
@@ -129,7 +187,8 @@ async function start() {
             "view employees",
             "Update employee roles",
             "Delete employee",
-            "view all employees by manager",
+            "Delete department",
+            "view all employees by department",
             "EXIT"]
         }
     ])
@@ -155,6 +214,7 @@ async function getAddEmployeeInfo(){
             type:"list",
             message:"What is the employee's role?",
             choices: [
+                // we can use spread operator to pass the values of our roles array
                 ...roles
             ]
         },
@@ -163,6 +223,7 @@ async function getAddEmployeeInfo(){
             type:"list",
             message:"Who id the employee's manager?",
             choices: [
+                // we can use spread operator to pass the values of our managers array
                 ...managers
             ]
         }
