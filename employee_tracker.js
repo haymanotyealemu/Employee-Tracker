@@ -4,8 +4,9 @@ let Database = require("./lib/db");
 
 const db = new Database({
     host: "localhost",
-    port:3360,
-    password: "haymi@2020",
+    port:3306,
+    user: "root",
+    password: "Hasetmylove@2018",
     database: "employee_trackerDB"
 });
 // Here we start to call our database
@@ -138,7 +139,7 @@ async function addEmployee(employeeInfo){
 
 async function addDepartment(departmentInfo){
     const departmentName = departmentInfo.departmentName;
-    let query = "INSERT INTO department (name) VALUES (?)";
+    let query = 'INSERT INTO department (name) VALUES (?)';
     let args = [departmentName];
     const rows = await db.query(query, args);
     console.log(`Added department named ${departmentName}`);
@@ -172,8 +173,8 @@ async function removeDepartment(departmentInfo){
 }
 
 async function start() {
-    return
-    inquirer.prompt([
+    return inquirer
+    .prompt([
         {
             type:"list",
             message:"What would you like to do?",
