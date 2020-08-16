@@ -383,8 +383,24 @@ async function main(){
                 await removeDepartment(department);
                 break;
             }
+
+            case "EXIT": {
+                //Node normally exits with code 0 when no more async operations are pending.
+                exitLoop = true;
+                process.exit(0);
+                return;
+            }
+
+            default:
+                console.log(`Internal warning. Shouldn't get here. action was ${prompt.actions}`);
+        
+    
         }
     }
 }
 
-
+process.on("exit", async function(code) {
+    await db.close();
+    return console.log(`About to exit with code ${code}`);
+});
+main();
