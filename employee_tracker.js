@@ -241,6 +241,23 @@ async function getDepartmentInfo(){
         }
     ])
 }
+// get remove department info
+async function getremoveDepartmentInfo(){
+    const departments = await getDepartmentNames();
+    return inquirer
+    .prompt([
+        {
+            name: "departmentName",
+            type: "list",
+            message: "Which department do you want to remove?",
+            choices: [
+                ...departments
+            ]
+        }
+    
+        
+    ]);
+}
 
 async function getremoveEmployeeInfo(){
     const employees = await getEmployeeNames();
@@ -249,11 +266,12 @@ async function getremoveEmployeeInfo(){
         {
             name: "employeeName",
             type:"list",
+            message: "Which employee do you want to remove?",
             choices: [
                 ...employees
             ]
         }
-    ])
+    ]);
 }
 
 async function getRoleInfo(){
@@ -309,7 +327,63 @@ async function main(){
     let exitLoop = false;
     while(!exitLoop) {
         const prompt = await start();
-        
+        switch(prompt.actions) {
+            case "Add department": {
+                const newDepartmentName = await getDepartmentInfo();
+                await addDepartment(newDepartmentName);
+                break;
+            }
+
+            case "Add role": {
+                const newRole = await getRoleInfo();
+                await addRole(newRole);
+                break;
+            }
+
+            case "Add employee": {
+                const newEmployee = await getAddEmployeeInfo();
+                await addEmployee(newEmployee);
+                break;
+            }
+
+            case "View departments": {
+                await viewDepartment();
+                break;
+            }
+
+            case "view roles": {
+                await viewRole();
+                break;
+            }
+            case "view employees": {
+                await viewEmployee();
+                break;
+            }
+
+            case "view all employees by department": {
+                await viewEmployeesByDepartment();
+                break;
+            }
+
+            case "Update employee roles": {
+                const employee = await getUpdateEmployeeRoleInfo();
+                await updateEmployeerole(employee);
+                break;
+            }
+
+            case "Delete employee": {
+                const employee = await getremoveEmployeeInfo();
+                await removeEmployee(employee);
+                break;
+            }
+
+            
+            case "Delete department": {
+                const department = await getremoveDepartmentInfo();;
+                await removeDepartment(department);
+                break;
+            }
+        }
     }
 }
 
