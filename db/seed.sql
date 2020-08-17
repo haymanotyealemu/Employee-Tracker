@@ -39,5 +39,7 @@ INSERT into employee (first_name, last_name, role_id, manager_id) VALUES ("James
 INSERT into employee (first_name, last_name, role_id, manager_id) VALUES ("Carlos", "Harris", 5, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Winta", "Blake", 5, 9);
 
-
+INSERT into employee (first_name, last_name, role_id, manager_id) VALUES ("William", "Tim", 1, null);
+INSERT into employee (first_name, last_name, role_id, manager_id) VALUES ("Natenael", "Donald", 2, 1);
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Bernard", "Blake", 2, 1);
 

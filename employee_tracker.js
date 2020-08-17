@@ -10,6 +10,8 @@ const db = new Database({
     database: "employee_trackerDB"
 });
 // Here we start to call our database
+
+// Determine who is a manager from our employee table.
 async function getManagerName(){
     let query = "SELECT * FROM employee WHERE manager_id IS NULL";
     // we need to loop throghout the rows in the employee table which is manager_id column is null
@@ -20,7 +22,7 @@ async function getManagerName(){
     }
     return employeeNames;
 }
-
+// This asyncfunction return all roles from title column of role table as an array.
 async function getRoles(){
     let query = "SELECT  title FROM role";
     const rows = await db.query(query);
@@ -30,7 +32,7 @@ async function getRoles(){
     }
     return roles;
 }
-
+// This asyncfunction return all departmentnames from name column of department table as an array.
 async function getDepartmentNames(){
     let query = "SELECT name FROM department";
     const rows = await db.query(query);
@@ -40,29 +42,29 @@ async function getDepartmentNames(){
     }
     return departments;
 }
-
+// This asyncfunction determine the id for each department name from department table.
 async function getDepartmentId(departmentName){
     let query = "SELECT * FROM department WHERE department.name=?";
     let args = [departmentName];
     const rows = await db.query(query, args);
     return rows[0].id;
 }
-
+// Here we can get the role's id for each title column from role table.
 async function getRoleId(roleName){
     let query = "SELECT * FROM role WHERE role.title=?";
-    let arg = [roleName];
-    const rows = await db.query(query, arg);
+    let args = [roleName];
+    const rows = await db.query(query, args);
     return rows[0].id;
 }
-
+// Here we can get the employee's id for each employee after having employee's first and last name.
 async function getEmployeeId(fullName){
     let employee = getFirstAndLastName(fullName);
     let query = "SELECT id FROM employee WHERE employee.first_name=? AND employee.last_name=?";
-    let arg = [employee[0],employee[1]];
-    const rows = await db.query(query, arg);
+    let args = [employee[0],employee[1]];
+    const rows = await db.query(query, args);
     return rows[0].id;
 }
-
+// Here our asyncfunction return all employee's fullname and store it in employeeNames array.
 async function getEmployeeNames(){
     let query = "SELECT * FROM employee";
     const rows = await db.query(query);
@@ -73,7 +75,7 @@ async function getEmployeeNames(){
     return employeeNames;
 }
 
-// Now we start the view functions
+// Now we build our query to view all recorded data from our tables.
 async function viewDepartment(){
     let query = "SELECT * FROM department";
     const rows = await db.query(query);
@@ -116,7 +118,7 @@ function getFirstAndLastName(fullName){
 }
 
 
-// Here we will define async functions for updating epmloyee role so we need to get the employee full name and 
+// Here we will define async functions for updating epmloyee role so we need to get the employee full name and emloyee's role_id which is foreign key references role(id) from our role table.
 async function updateEmployeerole(employeeInfo){
     const roleId = await getRoleId(employeeInfo.role);
     const employee = getFirstAndLastName(employeeInfo.employeeName);
@@ -126,17 +128,18 @@ async function updateEmployeerole(employeeInfo){
     const rows = await db.query(query, args);
     console.log(`You updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
 }
-// Here we will define async function for inserting ane data to our employee,department and role tables.
+// Here we will define async function for inserting a new employee data to our employee table.
 
 async function addEmployee(employeeInfo){
     let roleId = await getRoleId(employeeInfo.role);
     let managerId = await getEmployeeId(employeeInfo.manager);
     let query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
-    let args = [employee.first_name, employee.last_name, roleId, managerId];
+    let args = [employeeInfo.first_name, employeeInfo.last_name, roleId, managerId];
     const rows= await db.query(query, args);
+    console.log(`You Added employee ${employeeInfo.first_name} ${employeeInfo.last_name}.`);
 
 }
-
+// Here we will define async function for inserting a new department data to our department table.
 async function addDepartment(departmentInfo){
     const departmentName = departmentInfo.departmentName;
     let query = 'INSERT INTO department (name) VALUES (?)';
@@ -163,13 +166,13 @@ async function removeEmployee(employeeInfo){
     const rows = await db.query(query, args);
     console.log(`Employee ${employeeName[0]} ${employeeName[1]} Deleted`);
 }
-//// Deleting employee from selected rows of employee table.
+// Deleting department from selected rows of department table.
 async function removeDepartment(departmentInfo){
     const departmentName = await getDepartmentNames(departmentInfo);
     let query = "DELETE FROM department WHERE name=?";
-    let args = [departmentName];
+    let args = [departmentName[0]];
     const rows = await db.query(query, args);
-    console.log(`${departmentName} was deleted!`);
+    console.log(`${departmentName[0]} was deleted!`);
 }
 
 async function start() {
@@ -228,7 +231,7 @@ async function getAddEmployeeInfo(){
                 ...managers
             ]
         }
-    ])
+    ]);
 }
 
 
@@ -240,9 +243,9 @@ async function getDepartmentInfo(){
             type:"input",
             message: "What is the name of new department? "
         }
-    ])
+    ]);
 }
-// get remove department info
+// Determine which department will be removed from user input
 async function getremoveDepartmentInfo(){
     const departments = await getDepartmentNames();
     return inquirer
@@ -297,7 +300,7 @@ async function getRoleInfo(){
                 ...departments
             ]
         }
-    ])
+    ]);
 }
 
 async function getUpdateEmployeeRoleInfo(){
@@ -321,7 +324,7 @@ async function getUpdateEmployeeRoleInfo(){
                 ...roles
             ]
         }
-    ])
+    ]);
 }
 
 async function main(){
