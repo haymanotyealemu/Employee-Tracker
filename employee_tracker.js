@@ -97,7 +97,7 @@ async function viewEmployee(){
 
 async function viewEmployeesByDepartment(){
     //Using the JOIN clause in a query, we can combine row data across two separate tables(employee and department)
-    let query = "SELECT first_name, last_name, dpartment.name FROM ((employee INNER JOIN role ON role_id = role.id) INNER JOIN department ON department_id = department.id);";
+    let query = "SELECT first_name, last_name, department.name FROM ((employee INNER JOIN role ON role_id = role.id) INNER JOIN department ON department_id = department.id);";
     const rows = await db.query(query);
     console.table(rows);
 }
@@ -124,7 +124,7 @@ async function updateEmployeerole(employeeInfo){
     const employee = getFirstAndLastName(employeeInfo.employeeName);
 
     let query = "UPDATE employee SET role_id=? WHERE employee.first_name=? AND employee.last_name=?";
-    let args = [roleId, employee[0], epmloyee[1]];
+    let args = [roleId, employee[0], employee[1]];
     const rows = await db.query(query, args);
     console.log(`You updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
 }
@@ -166,14 +166,7 @@ async function removeEmployee(employeeInfo){
     const rows = await db.query(query, args);
     console.log(`Employee ${employeeName[0]} ${employeeName[1]} Deleted`);
 }
-// Deleting department from selected rows of department table.
-async function removeDepartment(departmentInfo){
-    const departmentName = await getDepartmentNames(departmentInfo);
-    let query = "DELETE FROM department WHERE name=?";
-    let args = [departmentName[0]];
-    const rows = await db.query(query, args);
-    console.log(`${departmentName[0]} was deleted!`);
-}
+
 
 async function start() {
     return inquirer
@@ -191,11 +184,10 @@ async function start() {
             "view employees",
             "Update employee roles",
             "Delete employee",
-            "Delete department",
             "view all employees by department",
             "EXIT"]
         }
-    ])
+    ]);
 }
 // Here we prompt the user to get the employee information
 async function getAddEmployeeInfo(){
@@ -218,7 +210,7 @@ async function getAddEmployeeInfo(){
             type:"list",
             message:"What is the employee's role?",
             choices: [
-                // we can use spread operator to pass the values of our roles array populate from seed.sql
+                // we can use spread operator to pass the values of our roles array populate from the database.
                 ...roles
             ]
         },
@@ -227,14 +219,14 @@ async function getAddEmployeeInfo(){
             type:"list",
             message:"Who is the employee's manager?",
             choices: [
-                // we can use spread operator to pass the values of our managers array populate from seed.sql
+                // we can use spread operator to pass the values of our managers array populate from database
                 ...managers
             ]
         }
     ]);
 }
 
-
+// Here we grab the department name from the user input and we call it when we add a new department.
 async function getDepartmentInfo(){
     return inquirer
     .prompt([
@@ -245,23 +237,7 @@ async function getDepartmentInfo(){
         }
     ]);
 }
-// Determine which department will be removed from user input
-async function getremoveDepartmentInfo(){
-    const departments = await getDepartmentNames();
-    return inquirer
-    .prompt([
-        {
-            name: "departmentName",
-            type: "list",
-            message: "Which department do you want to remove?",
-            choices: [
-                ...departments
-            ]
-        }
-    
-        
-    ]);
-}
+
 
 async function getremoveEmployeeInfo(){
     const employees = await getEmployeeNames();
@@ -382,11 +358,11 @@ async function main(){
             }
 
             
-            case "Delete department": {
-                const department = await getremoveDepartmentInfo();;
-                await removeDepartment(department);
-                break;
-            }
+            // case "Delete department": {
+            //     const department = await getremoveDepartmentInfo();;
+            //     await removeDepartment(department);
+            //     break;
+            // }
 
             case "EXIT": {
                 //Node normally exits with code 0 when no more async operations are pending.
