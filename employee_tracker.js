@@ -56,6 +56,7 @@ async function getRoleId(roleName){
     const rows = await db.query(query, args);
     return rows[0].id;
 }
+
 // Here we can get the employee's id for each employee after having employee's first and last name.
 async function getEmployeeId(fullName){
     let employee = getFirstAndLastName(fullName);
@@ -101,6 +102,13 @@ async function viewEmployeesByDepartment(){
     const rows = await db.query(query);
     console.table(rows);
 }
+// View employees by managers
+async function viewEmployeesByManager(){
+    //Using the JOIN ON clause in a query, we can match manager_id with employee id in our case just id columns form employee table.
+    let query = "SELECT E.first_name AS Employee_Name, M.first_name AS Manager FROM employee E JOIN employee M ON E.manager_id = M.id;"; 
+    const rows = await db.query(query);
+    console.table(rows);
+}
 
 // This function will return an array with only two elements frist_name and last_name.
 function getFirstAndLastName(fullName){
@@ -128,7 +136,6 @@ async function updateEmployeerole(employeeInfo){
     const rows = await db.query(query, args);
     console.log(`You updated employee ${employee[0]} ${employee[1]} with role ${employeeInfo.role}`);
 }
-// Here we will define async function for inserting a new employee data to our employee table.
 
 async function addEmployee(employeeInfo){
     let roleId = await getRoleId(employeeInfo.role);
@@ -167,7 +174,6 @@ async function removeEmployee(employeeInfo){
     console.log(`Employee ${employeeName[0]} ${employeeName[1]} Deleted`);
 }
 
-
 async function start() {
     return inquirer
     .prompt([
@@ -185,6 +191,7 @@ async function start() {
             "Update employee roles",
             "Delete employee",
             "view all employees by department",
+            "view employees by manager",
             "EXIT"]
         }
     ]);
@@ -356,13 +363,11 @@ async function main(){
                 await removeEmployee(employee);
                 break;
             }
-
-            
-            // case "Delete department": {
-            //     const department = await getremoveDepartmentInfo();;
-            //     await removeDepartment(department);
-            //     break;
-            // }
+            case "view employees by manager": {
+                
+                await viewEmployeesByManager();
+                break;
+            }
 
             case "EXIT": {
                 //Node normally exits with code 0 when no more async operations are pending.
